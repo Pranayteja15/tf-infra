@@ -1,7 +1,31 @@
-provider "aws" {
-  region = "us-east-1"
+terraform {
+    backend "s3" {
+    bucket         = "my-terraform-state-bucket-latest"
+    key    = "terraform/jenkins/statefile.tfstate"
+    region = "us-east-1"
+    dynamodb_table = "terraform-lock"
+
+  }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+  required_version = "~> 1.5"
 }
 
-resource "aws_s3_bucket" "example" {
-  bucket = "pt-terraform-bucket-example"
+provider "aws" {
+  default_tags {
+    tags = {
+      Environment = "training"
+    }
+  }
+}
+
+resource "aws_s3_bucket" "my_bucket" {
+  bucket = "pt-tf-bucket-training"
+  tags = {
+    CreadtedBy = "pranay teja"
+  }
 }
